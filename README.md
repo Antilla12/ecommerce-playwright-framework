@@ -84,6 +84,16 @@ npm run report         # open last HTML report
 
 ---
 
+## ⚠️ Known Limitations
+
+**WebKit is excluded from the browser matrix.** Both API requests and UI interactions against automationexercise.com fail consistently under WebKit specifically:
+- API calls (`request.get`/`post`) receive an HTML error page instead of JSON
+- Basic UI actions (`locator.fill`, `locator.scrollIntoViewIfNeeded`) time out on pages that load correctly in Chromium and Firefox
+
+This reproduces consistently and is isolated to WebKit's request/rendering layer against this specific site — not a bug in this framework's page objects, fixtures, or test logic (all of which pass reliably in Chromium and Firefox). Rather than mask this with retries or workarounds, it's documented here and WebKit is excluded from both local runs and CI.
+
+---
+
 ## ⚙️ CI/CD
 
 GitHub Actions runs the full suite on every push/PR across **Chromium, Firefox, and WebKit** in a matrix, uploading the HTML report and (on failure) traces/videos as artifacts. See [`.github/workflows/playwright.yml`](./.github/workflows/playwright.yml).
