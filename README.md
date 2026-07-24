@@ -92,6 +92,8 @@ npm run report         # open last HTML report
 
 This reproduces consistently and is isolated to WebKit's request/rendering layer against this specific site — not a bug in this framework's page objects, fixtures, or test logic (all of which pass reliably in Chromium and Firefox). Rather than mask this with retries or workarounds, it's documented here and WebKit is excluded from both local runs and CI.
 
+**Visual regression scopes to a single product card, not the full grid.** The full product listing (`.features_items`) was tried first, but its rendered height varied by 50–500+ px between otherwise-identical runs, even after waiting for network idle, fonts, and image decode. This points to variable promotional/recommended content served by the site itself, outside this framework's control. Rather than loosen the diff tolerance to hide that instability, the visual test scopes down to one structurally stable product card, which is genuinely deterministic.
+
 ---
 
 ## ⚙️ CI/CD
