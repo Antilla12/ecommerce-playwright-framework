@@ -15,26 +15,29 @@ test.describe('Visual Regression @visual', () => {
   });
 
   test('product card matches baseline', async ({ page }) => {
-    await page.goto('/products');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/products', { waitUntil: 'domcontentloaded' });
+    await page.locator('.features_items').waitFor({ state: 'visible' });
     await page.evaluate(() => document.fonts.ready);
 
-    // The full product grid (.features_items) was tried here first, but its
-    // rendered height varies by 50-500+ px between identical runs — the site
-    // appears to serve variable amounts of promotional/recommended content
-    // that isn't within this framework's control to stabilize. Rather than
-    // loosen tolerances to hide that instability, this test scopes down to
-    // a single, structurally stable product card, which is deterministic.
-    const firstCard = page.locator('.product-image-wrapper').first();
-    await firstCard.scrollIntoViewIfNeeded();
-    await firstCard.locator('img').evaluate((img) =>
+    // .first() on the grid was tried initially, but this site doesn't
+    // guarantee a fixed product order — the same 19% pixel diff we saw
+    // debugging the cart flow (different product card entirely) showed up
+    // here too. Targeting a specific product by its stable data-product-id
+    // (Blue Top = id 1, confirmed via the same method used in cart.spec.js)
+    // removes that assumption.
+    const blueTopCard = page.locator('.product-image-wrapper', {
+      has: page.locator('a.add-to-cart[data-product-id="1"]'),
+    }).first();
+
+    await blueTopCard.scrollIntoViewIfNeeded();
+    await blueTopCard.locator('img').evaluate((img) =>
       img.complete ? Promise.resolve() : new Promise((resolve) => {
         img.addEventListener('load', resolve, { once: true });
         img.addEventListener('error', resolve, { once: true });
       })
     );
 
-    await expect(firstCard).toHaveScreenshot('product-card.png');
+    await expect(blueTopCard).toHaveScreenshot('product-card.png');
   });
 });
 
