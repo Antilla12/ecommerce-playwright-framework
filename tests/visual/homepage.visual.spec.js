@@ -14,14 +14,27 @@ test.describe('Visual Regression @visual', () => {
     await expect(page.locator('#header')).toHaveScreenshot('homepage-header.png');
   });
 
-  test('product listing page matches baseline', async ({ page }) => {
+  test('product card matches baseline', async ({ page }) => {
     await page.goto('/products');
     await page.waitForLoadState('networkidle');
     await page.evaluate(() => document.fonts.ready);
 
-    await expect(page.locator('.features_items')).toHaveScreenshot('product-listing.png', {
-      maxDiffPixelRatio: 0.05, // small tolerance for lazy-loaded product images
-    });
+    // The full product grid (.features_items) was tried here first, but its
+    // rendered height varies by 50-500+ px between identical runs — the site
+    // appears to serve variable amounts of promotional/recommended content
+    // that isn't within this framework's control to stabilize. Rather than
+    // loosen tolerances to hide that instability, this test scopes down to
+    // a single, structurally stable product card, which is deterministic.
+    const firstCard = page.locator('.product-image-wrapper').first();
+    await firstCard.scrollIntoViewIfNeeded();
+    await firstCard.locator('img').evaluate((img) =>
+      img.complete ? Promise.resolve() : new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      })
+    );
+
+    await expect(firstCard).toHaveScreenshot('product-card.png');
   });
 });
 
