@@ -22,8 +22,8 @@ class ProductsPage extends BasePage {
    */
   async addProductToCartById(productId) {
     const button = this.page.locator(`a.add-to-cart[data-product-id="${productId}"]`).first();
-    await button.scrollIntoViewIfNeeded();
-    await button.click({ force: true }); // overlay div can sit on top even without :hover, blocking a normal click
+    await button.click();
+    
   }
 
   async dismissAddedToCartModal() {
