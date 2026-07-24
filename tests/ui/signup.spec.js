@@ -8,8 +8,7 @@ test.describe('User Signup @smoke', () => {
     await authPage.goto();
     await authPage.startSignup(user.name, user.email);
 
-    await expect(page.locator('h2.title')).toHaveText('Enter Account Information');
-
+    await expect(page.getByRole('heading', { name: 'Enter Account Information' })).toBeVisible();
     await authPage.fillAccountDetails(user);
 
     await expect(authPage.accountCreatedHeader).toBeVisible();

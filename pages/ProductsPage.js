@@ -15,15 +15,15 @@ class ProductsPage extends BasePage {
   }
 
   /**
-   * Hover-reveal pattern: "Add to cart" overlay only appears on hover
-   * in this site's markup, matching real e-commerce UX.
+   * The site renders two "Add to cart" buttons per product — one in the
+   * static card, one inside a hover overlay. Both share the same
+   * data-product-id, so we target that attribute directly instead of
+   * relying on hover state, which proved unreliable across browsers.
    */
-  async addProductToCartByName(productName) {
-    const card = this.page.locator('.product-image-wrapper', {
-      has: this.page.locator('.productinfo p', { hasText: productName }),
-    });
-    await card.hover();
-    await card.getByText('Add to cart').first().click();
+  async addProductToCartById(productId) {
+    const button = this.page.locator(`a.add-to-cart[data-product-id="${productId}"]`).first();
+    await button.scrollIntoViewIfNeeded();
+    await button.click({ force: true }); // overlay div can sit on top even without :hover, blocking a normal click
   }
 
   async dismissAddedToCartModal() {
@@ -35,7 +35,7 @@ class ProductsPage extends BasePage {
     await this.searchBtn.click();
   }
 
-  async goToCart() {
+  async goToCartFromModal() {
     await this.viewCartLink.click();
   }
 }

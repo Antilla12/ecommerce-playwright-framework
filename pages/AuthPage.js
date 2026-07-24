@@ -21,8 +21,14 @@ class AuthPage extends BasePage {
     this.monthSelect = page.locator('#months');
     this.yearSelect = page.locator('#years');
     this.firstName = page.locator('#first_name');
+   this.firstName = page.locator('#first_name');
     this.lastName = page.locator('#last_name');
+    this.address1 = page.locator('#address1');
     this.country = page.locator('#country');
+    this.state = page.locator('#state');
+    this.city = page.locator('input[data-qa="city"]');
+    this.zipcode = page.locator('#zipcode');
+    this.mobileNumber = page.locator('#mobile_number');
     this.createAccountBtn = page.locator('button[data-qa="create-account"]');
     this.accountCreatedHeader = page.locator('h2[data-qa="account-created"]');
     this.continueBtn = page.locator('a[data-qa="continue-button"]');
@@ -51,7 +57,7 @@ class AuthPage extends BasePage {
    * Fills the multi-step account details form — exercises
    * native <select> dropdowns via selectOption (not click+click).
    */
-  async fillAccountDetails({ password, day, month, year, firstName, lastName, country }) {
+  async fillAccountDetails({ password, day, month, year, firstName, lastName, address1, country, state, city, zipcode, mobileNumber }) {
     await this.titleMr.check();
     await this.password.fill(password);
     await this.daySelect.selectOption(day);
@@ -59,7 +65,12 @@ class AuthPage extends BasePage {
     await this.yearSelect.selectOption(year);
     await this.firstName.fill(firstName);
     await this.lastName.fill(lastName);
+    await this.address1.fill(address1);
     await this.country.selectOption(country);
+    await this.state.fill(state);
+    await this.city.fill(city);
+    await this.zipcode.fill(zipcode);
+    await this.mobileNumber.fill(mobileNumber);
     await this.createAccountBtn.click();
   }
 

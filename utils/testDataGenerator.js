@@ -14,7 +14,12 @@ function generateUser() {
     day: String(faker.number.int({ min: 1, max: 28 })),
     month: String(faker.number.int({ min: 1, max: 12 })),
     year: String(faker.number.int({ min: 1980, max: 2005 })),
+    address1: faker.location.streetAddress(),
     country: 'United States',
+    state: faker.location.state(),
+    city: faker.location.city(),
+    zipcode: faker.location.zipCode(),
+    mobileNumber: faker.string.numeric(10),
   };
 }
 
